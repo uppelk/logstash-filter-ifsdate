@@ -19,6 +19,8 @@ class LogStash::Filters::IfsDate < LogStash::Filters::Base
 
   #
   config :field, :validate => :string, :required => true
+  
+  config :default_formats, :validate => :array
 
   # Store the matching timestamp into the given target field.  If not provided,
   # default to updating the `@timestamp` field of the event.
@@ -38,7 +40,11 @@ class LogStash::Filters::IfsDate < LogStash::Filters::Base
 	@parser = Java::test.DateParser.new()
 	@parser.init()
 	
-	print "parser created.\n"
+	if (!default_formats.nil?)
+		@parser.setDefaultFormats(default_formats)
+	end
+	
+	#print "parser created.\n"
   end # def register
 
   public
@@ -55,9 +61,10 @@ class LogStash::Filters::IfsDate < LogStash::Filters::Base
 				filter_matched(event)
 			end
 		rescue => error
-			print "===============> " + error.to_s + "\n"
-			print "===============> " + error.backtrace.join("\n")
+			#print "\n===============> " + error.to_s + "\n"
+			#print "===============> " + error.backtrace.join("\n")
 			@tag_on_failure.each do |tag|
+				#print "\n===============> " + tag + "\n"
 				event["tags"] ||= []
 				event["tags"] << tag unless event["tags"].include?(tag)
 			end
