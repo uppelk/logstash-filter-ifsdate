@@ -20,7 +20,7 @@ class LogStash::Filters::IfsDate < LogStash::Filters::Base
   #
   config :field, :validate => :string, :required => true
   
-  config :default_formats, :validate => :array
+  config :formats, :validate => :array
 
   # Store the matching timestamp into the given target field.  If not provided,
   # default to updating the `@timestamp` field of the event.
@@ -40,8 +40,8 @@ class LogStash::Filters::IfsDate < LogStash::Filters::Base
 	@parser = Java::test.DateParser.new()
 	@parser.init()
 	
-	if (!default_formats.nil?)
-		@parser.setDefaultFormats(default_formats)
+	if (!formats.nil?)
+		@parser.addFormats(formats)
 	end
 	
 	#print "parser created.\n"
